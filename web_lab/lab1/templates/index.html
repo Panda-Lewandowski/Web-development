@@ -9,7 +9,7 @@
 		<noscript><link rel="stylesheet" href="{% static 'css/noscript.css' %}" /></noscript>
 	</head>
 	<body class="is-preload">
-
+			{% csrf_token %}
 		<!-- Wrapper -->
 			<div id="wrapper" class="fade-in">
 
@@ -54,25 +54,25 @@
 							<hr />
 							<div class="row gtr-uniform">
 							<div class="col-6 col-12-xsmall">
-							<select name="demo-category" id="demo-category">
-									<option value="">Choose method</option>
+							<select name="method" id="demo-category">
 									<option value="1">GET</option>
 									<option value="2">POST</option>
-									<option value="1">DELETE</option>
-									<option value="1">PUT</option>
-									<option value="1">OPTION</option>
+									<option value="3">DELETE</option>
+									<option value="4">PUT</option>
+									<option value="5">OPTION</option>
+									<option value="6">HEAD</option>
 								</select>
 							</div>
 								<div class="col-6 col-12-xsmall">
-									<input type="text" name="demo-name" id="demo-name" value="" placeholder="http://" />
+									<input type="text" name="url"  value="http://google.com" placeholder="http://google.com" />
 								</div>
 							</div>
 							<br />
-							<a href="" class="button icon fa-paper-plane">SEND</a>
+							<a id="send" class="button icon fa-paper-plane" onclick="send()">SEND</a>
 							<hr/>
 							<h2>Response</h2>
 						<div class="box">
-							<p>{{ response }}</p>
+							<p name="resp"></p>
 						</div>
 						</article>
 
@@ -94,6 +94,26 @@
 			<script src="{% static 'js/breakpoints.min.js' %}"></script>
 			<script src="{% static 'js/util.js' %}"></script>
 			<script src="{% static 'js/main.js' %}"></script>
+
+			<script>
+				function send() {
+						var req_url = $("input[name='url']").val();
+						var req_method = $("select[name='method']").val();
+						$.ajax ({
+							url: "send/", 
+							method: "POST", 
+							data: { csrfmiddlewaretoken: "{{ csrf_token }}", 
+								url: req_url, 
+								method: req_method
+							}, 
+							success: function (data){
+								var body =  data.content;
+								var head =  data.headers;
+								document.getElementsByName("resp")[0].innerHTML = body;
+							}
+						});
+					};
+			</script>
 
 	</body>
 </html>
