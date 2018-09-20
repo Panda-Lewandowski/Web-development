@@ -108,8 +108,8 @@
 							}, 
 							success: function (data){
 								var body =  data.content;
-								var head =  data.headers;
-								document.getElementsByName("resp")[0].innerHTML = body;
+								var headers =  data.headers;
+								document.getElementsByName("resp")[0].innerHTML = headers + body;
 							}
 						});
 					};

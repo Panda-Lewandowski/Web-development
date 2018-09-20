@@ -47,7 +47,8 @@ def send(request):
             r = requests.head(url)
 
         headers = http_response(r).replace("\n", "<br >")
-        content = r.content
+        content = r.content.decode("utf-8").replace("<", "&lt")
+        content.replace(">", "&gt")
         
         return JsonResponse({"status": "ok", "headers": headers, "content": content})
     else: 
