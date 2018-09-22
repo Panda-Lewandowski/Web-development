@@ -1,3 +1,6 @@
 from django.db import models
 
-# Create your models here.
+class Todo(models.Model):
+    task = models.TextField(max_length=150)
+    deadline = models.DateTimeField()
+
