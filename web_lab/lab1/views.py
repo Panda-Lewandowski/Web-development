@@ -5,9 +5,11 @@ from django.http import JsonResponse, HttpResponse, QueryDict
 from .models import Todo
 from django.core import serializers
 from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 from django.utils.datastructures import MultiValueDictKeyError
 from datetime import datetime
 from urllib.parse import parse_qs
+from django.views import View
 import requests 
 import json
 
@@ -61,38 +63,15 @@ def send(request):
         return JsonResponse({"error": "invalid method"})
 
 
-@csrf_exempt
-def api(request):
-    if request.method == "POST":
-        data = request.POST 
-        try:
-            date = data['date']
-            text = data['task']
-        except MultiValueDictKeyError:
-            return JsonResponse({'status': 'error', 'text': 'The query must contain data of the form date = & task ='})
-        else:
-            new_task = Todo(task=text, deadline=datetime.strptime(date, "%d.%m.%Y"))
-            new_task.save()
-            return HttpResponse(status=201)
-    elif request.method == "GET":
-        params = request.GET
-        if len(params) == 0:
-            data = Todo.objects.all()
-        else:
-            data = Todo.objects.filter(id__exact=params['id'])
-        return JsonResponse({'todo': list(data.values())})
-    elif request.method == "DELETE":
-        if request.META['QUERY_STRING'] == '':
-            return JsonResponse({'status': 'error', 'text': 'Please, send id via query string!'})
-        else:
-            obj_id = parse_qs(request.META['QUERY_STRING'])['id'][0]
-            obj = Todo.objects.filter(id__exact=obj_id)
-            if len(obj) == 0:
-                return JsonResponse({'status': 'error', 'text': 'Invalid id'})
-            else:
-                obj.delete()
-                return HttpResponse(status=200)
-    elif request.method == "PUT":
+class API(View):
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super(API, self).dispatch(request, *args, **kwargs)
+
+    def head(self, request):
+        return HttpResponse()
+
+    def put(self, request):
         if request.META['CONTENT_TYPE'] != 'application/x-www-form-urlencoded':
             return JsonResponse({'status': 'error', 'text': 'Please, send body request as urlencoded!'})
         else:
@@ -109,17 +88,49 @@ def api(request):
                 if len(obj) == 0:
                     return JsonResponse({'status': 'error', 'text': 'Invalid id'})
                 else:
+                    obj = obj[0]
                     if field == 'task':
                         obj.task = value
                     elif field == 'date':
-                        obj.date = datetime.strptime(date, "%d.%m.%Y")
+                        obj.date = datetime.strptime(value, "%d.%m.%Y")
                     else: 
                         return JsonResponse({'status': 'error', 'text': 'Invalid field'})
                     obj.save()
             return HttpResponse()
-    elif request.method == "OPTIONS":
+
+    def get(self, request):
+        params = request.GET
+        if len(params) == 0:
+            data = Todo.objects.all()
+        else:
+            data = Todo.objects.filter(id__exact=params['id'])
+        return JsonResponse({'todo': list(data.values())})
+
+    def post(self, request):
+        data = request.POST 
+        try:
+            date = data['date']
+            text = data['task']
+        except MultiValueDictKeyError:
+            return JsonResponse({'status': 'error', 'text': 'The query must contain data of the form date = & task ='})
+        else:
+            new_task = Todo(task=text, deadline=datetime.strptime(date, "%d.%m.%Y"))
+            new_task.save()
+            return HttpResponse(status=201)
+
+    def delete(self, request):
+        if request.META['QUERY_STRING'] == '':
+            return JsonResponse({'status': 'error', 'text': 'Please, send id via query string!'})
+        else:
+            obj_id = parse_qs(request.META['QUERY_STRING'])['id'][0]
+            obj = Todo.objects.filter(id__exact=obj_id)
+            if len(obj) == 0:
+                return JsonResponse({'status': 'error', 'text': 'Invalid id'})
+            else:
+                obj.delete()
+                return HttpResponse(status=200)
+
+    def options(self, request):
         response = HttpResponse()
         response['Allow'] = 'POST, GET, DELETE, PUT, OPTIONS, HEAD'
         return response
-    elif request.method == "HEAD":
-        return HttpResponse()

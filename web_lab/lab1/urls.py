@@ -6,5 +6,5 @@ urlpatterns = [
     url(r'^$',  views.index),
     url(r'index.html', views.index), 
     url(r'send/', views.send),
-    url(r'api/', views.api)
+    url(r'api/', views.API.as_view())
 ]
