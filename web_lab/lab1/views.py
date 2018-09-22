@@ -76,7 +76,10 @@ def api(request):
             return HttpResponse(status=201)
     elif request.method == "GET":
         params = request.GET
-        data = Todo.objects.filter(id__exact=params['id'])
+        if len(params) == 0:
+            data = Todo.objects.all()
+        else:
+            data = Todo.objects.filter(id__exact=params['id'])
         return JsonResponse({'todo': list(data.values())})
     elif request.method == "DELETE":
         if request.META['QUERY_STRING'] == '':
@@ -119,5 +122,4 @@ def api(request):
         response['Allow'] = 'POST, GET, DELETE, PUT, OPTIONS, HEAD'
         return response
     elif request.method == "HEAD":
-        data = Todo.objects.all()
-        return JsonResponse({'todo': list(data.values())})
+        return HttpResponse()
