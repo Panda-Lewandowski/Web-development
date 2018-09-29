@@ -12,8 +12,12 @@ from urllib.parse import parse_qs
 from django.views import View
 import requests 
 import json
+import logging
+
+logger = logging.getLogger(__name__)
 
 def index(request):
+    logger.debug("Calling index view from lab1 app")
     year = datetime.now().year
     bookmarks = []
     for app in apps.get_app_configs():
@@ -36,6 +40,7 @@ def http_response(response):
 
 
 def send(request):
+    logger.debug("Calling send view from lab1 app")
     if request.method == "POST":
         data = request.POST
         url = data['url']
@@ -53,6 +58,8 @@ def send(request):
             r = requests.options(url)
         elif method == '6': # HEAD 
             r = requests.head(url)
+        else: 
+            logger.critical("Invalid method index in request data in send view")
 
         headers = http_response(r).replace("\n", "<br >")
         content = r.content.decode("utf-8").replace("<", "&lt")
@@ -60,6 +67,7 @@ def send(request):
         
         return JsonResponse({"status": "ok", "headers": headers, "content": content})
     else: 
+        logger.error("Invalid method in send view")
         return JsonResponse({"error": "invalid method"})
 
 
@@ -69,10 +77,13 @@ class API(View):
         return super(API, self).dispatch(request, *args, **kwargs)
 
     def head(self, request):
+        logger.debug("API: HEAD request ")
         return HttpResponse()
 
     def put(self, request):
+        logger.debug("API: PUT request ")
         if request.META['CONTENT_TYPE'] != 'application/x-www-form-urlencoded':
+            logger.error("API: Body request is not url encoded!")
             return JsonResponse({'status': 'error', 'text': 'Please, send body request as urlencoded!'})
         else:
             data = request.body.decode() 
@@ -82,10 +93,12 @@ class API(View):
                 field = data['field'][0]
                 value = data['value'][0]
             except MultiValueDictKeyError:
+                logger.error("API: Invalid PUT request data!")
                 return JsonResponse({'status': 'error', 'text': 'The query must contain data of the form id = & filed = & value= '})
             else:
                 obj = Todo.objects.filter(id__exact=obj_id)
                 if len(obj) == 0:
+                    logger.error("API: Invalid id in PUT request!")
                     return JsonResponse({'status': 'error', 'text': 'Invalid id'})
                 else:
                     obj = obj[0]
@@ -94,11 +107,13 @@ class API(View):
                     elif field == 'date':
                         obj.date = datetime.strptime(value, "%d.%m.%Y")
                     else: 
+                        logger.error("API: Invalid field in PUT request!")
                         return JsonResponse({'status': 'error', 'text': 'Invalid field'})
                     obj.save()
             return HttpResponse()
 
     def get(self, request):
+        logger.debug("API: GET request ")
         params = request.GET
         if len(params) == 0:
             data = Todo.objects.all()
@@ -107,11 +122,13 @@ class API(View):
         return JsonResponse({'todo': list(data.values())})
 
     def post(self, request):
+        logger.debug("API: POST request ")
         data = request.POST 
         try:
             date = data['date']
             text = data['task']
         except MultiValueDictKeyError:
+            logger.error("API: Invalid POST request data!")
             return JsonResponse({'status': 'error', 'text': 'The query must contain data of the form date = & task ='})
         else:
             new_task = Todo(task=text, deadline=datetime.strptime(date, "%d.%m.%Y"))
@@ -119,18 +136,21 @@ class API(View):
             return HttpResponse(status=201)
 
     def delete(self, request):
+        logger.debug("API: DELETE request ")
         if request.META['QUERY_STRING'] == '':
             return JsonResponse({'status': 'error', 'text': 'Please, send id via query string!'})
         else:
             obj_id = parse_qs(request.META['QUERY_STRING'])['id'][0]
             obj = Todo.objects.filter(id__exact=obj_id)
             if len(obj) == 0:
+                logger.error("API: Invalid id in DELETE request!")
                 return JsonResponse({'status': 'error', 'text': 'Invalid id'})
             else:
                 obj.delete()
                 return HttpResponse(status=200)
 
     def options(self, request):
+        logger.debug("API: OPTIONS request")
         response = HttpResponse()
         response['Allow'] = 'POST, GET, DELETE, PUT, OPTIONS, HEAD'
         return response
