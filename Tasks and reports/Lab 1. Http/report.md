@@ -8,20 +8,20 @@
 
 В настоящий момент нет определенной спецификации для работы с данным заголовком, поэтому каждый ресурс по разному реагирует на запрос с OPTIONS:
 
-<img src="img/1.png">
+![Imgur](https://i.imgur.com/aEj33ki.png)
 
 Наиболее верно и ожидаемо отреагировал Google: 
 
-<img src="img/2.png">
+![Imgur](https://i.imgur.com/JEU1T13.png)
 
 
 ## Запрос HEAD 
 
 Запрос HEAD обычно применяется для извлечения метаданных, проверки наличия ресурса (валидация URL) и чтобы узнать, не изменился ли он с момента последнего обращения.
 
-<img src="img/3.png">
-<img src="img/4.png">
-<img src="img/5.png">
+![Imgur](https://i.imgur.com/NeHTGBc.png)
+![Imgur](https://i.imgur.com/1amOQuG.png)
+![Imgur](https://i.imgur.com/IZsVM1e.png)
 
 
 ## Запросы GET и POST
@@ -30,7 +30,7 @@
 
 В теле ответа, как правило содержится документ HTML. 
 
-<img src="img/6.png">
+![Imgur](https://i.imgur.com/TuBM7aw.png)
 
 
 ## VK API
@@ -157,7 +157,7 @@ https://api.vk.com/method/users.get?users_ids=id37131325&fields=photo_200_orig&a
 
 Стандартный ответ Vk API:
 
-<img src="img/7.png">
+![Imgur](https://i.imgur.com/29jOkcV.png)
 
 
 Код ответа 200 OK. Тело ответа содержит JSON в gzip. На запросы отвечает сервер Nginx. Используется протокол HTTP 1.1. 
@@ -169,7 +169,7 @@ https://api.vk.com/method/users.get?users_ids=id37131325&fields=photo_200_orig&a
 https://api.vk.com/method/wall.post?owner_id=-101389074&message=New post on group wall via API.console.&access_token=&v=5.85
 ```
 
-<img src="img/8.png">
+![Imgur](https://i.imgur.com/grv2CmD.png)
 
 ## Передача данных в POST-запросах 
 
