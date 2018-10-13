@@ -25,7 +25,7 @@ def index(request):
     i = bookmarks.index("Lab1")
     return render(
         request,
-        'index.html',
+        './index.html',
         context={'year': year, 
         'bookmarks': bookmarks[i:],
         'active': 'Lab1'}

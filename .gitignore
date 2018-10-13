@@ -105,3 +105,5 @@ venv.bak/
 
 # other
 .vscode
+cache/
+temp/
