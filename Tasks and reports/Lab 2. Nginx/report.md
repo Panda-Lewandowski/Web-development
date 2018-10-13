@@ -121,10 +121,16 @@ Percentage of the requests served within a certain time (ms)
 
 |Контент|Время отдачи |
 |---|---|
-|Cтраница| 2.444 ms |
+|Cтраница| 2.366 ms |
+
+## ServerPush
+
+После внедрения ServerPush время отдачи стало таким: 
+|Контент|Время отдачи |
+|---|---|
+|Cтраница| 2.412 ms |
 |Картинка| 0.734 ms |
 |API (GET)| 0.366 ms |
 |API (POST)| 2.984 ms |
 |API (PUT)| 3.588 ms|
 |API (HEAD)| 0.535 ms |
-
