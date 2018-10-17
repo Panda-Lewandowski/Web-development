@@ -5,10 +5,11 @@
 		<title>Web Development</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="{% static 'css/main.css' %}" />
-		<noscript><link rel="stylesheet" href="{% static 'css/noscript.css' %}" /></noscript>
+		<link rel="stylesheet" href="{% static './css/main.css' %}" />
+		<noscript><link rel="stylesheet" href="{% static './css/noscript.css' %}" /></noscript>
 	</head>
 	<body class="is-preload">
+			{% load static %}
 			{% csrf_token %}
 		<!-- Wrapper -->
 			<div id="wrapper" class="fade-in">
@@ -34,7 +35,7 @@
 								{% if bm|stringformat:"s" == active %}
 									<li class="active"><a href="index.html">{{ bm  }}</a></li>
 								{% else %}
-									<li><a href="{{ bm|lower }}/">{{ bm }}</a></li>
+									<li><a href="/{{ bm|lower }}">{{ bm }}</a></li>
 								{% endif %}
 							{% empty %}
 							<li><p style="margin-left: 25em">Sorry, there are no labs here now. </p></li>
@@ -47,33 +48,11 @@
 						<article class="post featured">
 							<header class="major">
 								<span class="date">September, 2018</span>
-								<h2>HTTP</h2>
-								<p>Реализуйте небольшое серверное приложение, с использованием любого фреймворка.<br />
-									Сервер должен содержать предоставлять API с поддержкой (GET, POST, DELETE, PUT, OPTION).</p>
+								<h2>NGINX</h2>
+								<p>Оценить изменения качественных показателей работы веб-приложения после добавления фронтенд-сервера</p>
 							</header>
 							<hr />
-							<div class="row gtr-uniform">
-							<div class="col-6 col-12-xsmall">
-							<select name="method" id="demo-category">
-									<option value="1">GET</option>
-									<option value="2">POST</option>
-									<option value="3">DELETE</option>
-									<option value="4">PUT</option>
-									<option value="5">OPTION</option>
-									<option value="6">HEAD</option>
-								</select>
-							</div>
-								<div class="col-6 col-12-xsmall">
-									<input type="text" name="url"  value="http://google.com" placeholder="http://google.com" />
-								</div>
-							</div>
-							<br />
-							<a id="send" class="button icon fa-paper-plane" onclick="send()">SEND</a>
-							<hr/>
-							<h2>Response</h2>
-						<div class="box">
-							<p name="resp"></p>
-						</div>
+							
 						</article>
 
 						
@@ -87,13 +66,13 @@
 			</div>
 
 		<!-- Scripts -->
-			<script src="{% static 'js/jquery.min.js' %}"></script>
-			<script src="{% static 'js/jquery.scrollex.min.js' %}"></script>
-			<script src="{% static 'js/jquery.scrolly.min.js' %}"></script>
-			<script src="{% static 'js/browser.min.js' %}"></script>
-			<script src="{% static 'js/breakpoints.min.js' %}"></script>
-			<script src="{% static 'js/util.js' %}"></script>
-			<script src="{% static 'js/main.js' %}"></script>
+			<script src="{% static './js/jquery.min.js' %}"></script>
+			<script src="{% static './js/jquery.scrollex.min.js' %}"></script>
+			<script src="{% static './js/jquery.scrolly.min.js' %}"></script>
+			<script src="{% static './js/browser.min.js' %}"></script>
+			<script src="{% static './js/breakpoints.min.js' %}"></script>
+			<script src="{% static './js/util.js' %}"></script>
+			<script src="{% static './js/main.js' %}"></script>
 
 			<script>
 				function send() {
